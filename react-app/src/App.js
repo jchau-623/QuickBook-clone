@@ -22,8 +22,12 @@ function App() {
     }, []);
 
     const fetchInvoices = async () => {
-        const response = await axios.get('/api/invoices');
-        setInvoices(response.data);
+        try {
+            const response = await axios.get('http://localhost:5000/api/invoices');
+            setInvoices(response.data);
+        } catch (error) {
+            console.error('Failed to fetch invoices', error);
+        }
     };
 
     const handleAddItem = () => {
@@ -67,29 +71,39 @@ function App() {
             setError('Client and month are required');
             return;
         }
-        const response = await axios.post('/api/invoices', {
-            client,
-            month,
-            items,
-        });
-        setClient('');
-        setMonth('');
-        dispatch(setItems([]));
-        fetchInvoices();
-        alert('Invoice saved successfully');
+        try {
+            await axios.post('http://localhost:5000/api/invoices', {
+                client,
+                month,
+                items,
+            });
+            setClient('');
+            setMonth('');
+            dispatch(setItems([]));
+            fetchInvoices();
+            alert('Invoice saved successfully');
+        } catch (error) {
+            console.error('Failed to save invoice', error);
+            setError('Failed to save invoice');
+        }
     };
 
-    const handleSelectInvoice = async (invoice) => {
+    const handleSelectInvoice = (invoice) => {
         setSelectedInvoice(invoice);
         dispatch(setItems(invoice.items));
     };
 
     const handleDeleteInvoice = async (invoiceId) => {
-        await axios.delete(`/api/invoices/${invoiceId}`);
-        fetchInvoices();
-        if (selectedInvoice && selectedInvoice.id === invoiceId) {
-            setSelectedInvoice(null);
-            dispatch(setItems([]));
+        try {
+            await axios.delete(`http://localhost:5000/api/invoices/${invoiceId}`);
+            fetchInvoices();
+            if (selectedInvoice && selectedInvoice.id === invoiceId) {
+                setSelectedInvoice(null);
+                dispatch(setItems([]));
+            }
+        } catch (error) {
+            console.error('Failed to delete invoice', error);
+            setError('Failed to delete invoice');
         }
     };
 
