@@ -1,20 +1,14 @@
 from app.models import db, User
 
-
-# Adds a demo user, you can add other users here if you want
 def seed_users():
-    demo = User(
-        email='demo@aa.io', password='password')
-    marnie = User(
-        email='marnie@aa.io', password='password')
-    bobbie = User(
-        email='bobbie@aa.io', password='password')
-
-    db.session.add(demo)
-    db.session.add(marnie)
-    db.session.add(bobbie)
-
-    db.session.commit()
+    existing_user = User.query.filter_by(email='johnchau666@netscape.net').first()
+    if not existing_user:
+        user = User(
+            email='johnchau666@netscape.net',
+            password='password'
+        )
+        db.session.add(user)
+        db.session.commit()
 
 
 # Uses a raw SQL query to TRUNCATE the users table.

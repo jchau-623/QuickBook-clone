@@ -3,8 +3,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import LoginForm from './components/auth/LoginForm';
 import SignUpForm from './components/auth/SignUpForm';
-import NavBar from './components/Navbar';
-import HomePage from './components/HomePage';
+import NavBar from './components/NavBar';
+import HomePage from './components/MainPage/HomePage';
 import { authenticate } from './store/session';
 import './output.css';
 
