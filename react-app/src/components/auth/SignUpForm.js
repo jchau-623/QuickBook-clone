@@ -53,6 +53,7 @@ const SignUpForm = () => {
             <input
               type='text'
               name='email'
+              placeholder='Email'
               onChange={updateEmail}
               value={email}
               className="mt-2 w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -63,6 +64,7 @@ const SignUpForm = () => {
             <input
               type='password'
               name='password'
+              placeholder='Password'
               onChange={updatePassword}
               value={password}
               className="mt-2 w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -73,9 +75,9 @@ const SignUpForm = () => {
             <input
               type='password'
               name='repeat_password'
+              placeholder='Re-enter your password'
               onChange={updateRepeatPassword}
               value={repeatPassword}
-              required={true}
               className="mt-2 w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>

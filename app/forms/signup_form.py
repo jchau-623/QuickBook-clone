@@ -15,3 +15,6 @@ def user_exists(form, field):
 class SignUpForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired(), Email(), user_exists])
     password = PasswordField('Password', validators=[DataRequired()])
+
+    class Meta:
+        csrf = False

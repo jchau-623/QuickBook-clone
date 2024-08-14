@@ -104,7 +104,7 @@ export const deleteInvoice = (invoiceId) => async (dispatch) => {
 };
 
 // reducer
-export default function reducer(state = initialState, action) {
+export default function invoiceReducer(state = initialState, action) {
     switch (action.type) {
         case SET_INVOICES:
             return { ...state, invoices: action.payload };

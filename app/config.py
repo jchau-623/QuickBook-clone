@@ -10,3 +10,4 @@ class Config:
     # JWT Configuration
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'your_jwt_secret_key'
     JWT_ACCESS_TOKEN_EXPIRES = os.environ.get('JWT_ACCESS_TOKEN_EXPIRES', 3600)  # Expires in 1 hour by default
+    WTF_CSRF_ENABLED = False  # Make sure this is set to False

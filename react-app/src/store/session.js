@@ -15,12 +15,12 @@ const initialState = { user: null };
 
 // Action to authenticate the user using the stored JWT token
 export const authenticate = () => async (dispatch) => {
-  const token = localStorage.getItem('token'); // Retrieve JWT token from storage
+  const token = localStorage.getItem('token');
   if (token) {
     const response = await fetch('/api/auth/', {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`  // Include JWT in Authorization header
+        'Authorization': `Bearer ${token}`
       }
     });
     if (response.ok) {
@@ -29,6 +29,10 @@ export const authenticate = () => async (dispatch) => {
         return;
       }
       dispatch(setUser(data));
+    } else {
+      // If the token is invalid or expired, remove it
+      localStorage.removeItem('token');
+      dispatch(removeUser());
     }
   }
 };
