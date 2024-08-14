@@ -2,12 +2,11 @@ import os
 
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'your_default_secret_key'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    # SQLAlchemy 1.4 no longer supports url strings that start with 'postgres'
-    # (only 'postgresql') but heroku's postgres add-on automatically sets the
-    # url in the hidden config vars to start with postgres.
-    # so the connection uri must be updated here (for production)
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL').replace('postgres://', 'postgresql://')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL').replace('postgres://', 'postgresql://')
     SQLALCHEMY_ECHO = True
+
+    # JWT Configuration
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'your_jwt_secret_key'
+    JWT_ACCESS_TOKEN_EXPIRES = os.environ.get('JWT_ACCESS_TOKEN_EXPIRES', 3600)  # Expires in 1 hour by default
