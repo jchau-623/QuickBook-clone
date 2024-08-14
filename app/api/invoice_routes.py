@@ -4,11 +4,10 @@ from app.models.invoicelineitem import InvoiceLineItem
 from app.models.db import db
 from datetime import datetime
 
-
 invoice_bp = Blueprint('invoices', __name__)
 
 # Route to create a new invoice
-@invoice_bp.route('/invoices', methods=['POST'])
+@invoice_bp.route('/', methods=['POST'])
 def create_invoice():
     data = request.get_json()
 
@@ -48,19 +47,19 @@ def create_invoice():
     return jsonify(invoice.to_dict()), 201
 
 # Route to get all invoices
-@invoice_bp.route('/invoices', methods=['GET'])
+@invoice_bp.route('/', methods=['GET'])
 def get_invoices():
     invoices = Invoice.query.all()
     return jsonify([invoice.to_dict() for invoice in invoices]), 200
 
 # Route to get a specific invoice by ID
-@invoice_bp.route('/invoices/<int:invoice_id>', methods=['GET'])
+@invoice_bp.route('/<int:invoice_id>', methods=['GET'])
 def get_invoice(invoice_id):
     invoice = Invoice.query.get_or_404(invoice_id)
     return jsonify(invoice.to_dict()), 200
 
 # Route to update an existing invoice
-@invoice_bp.route('/invoices/<int:invoice_id>', methods=['PUT'])
+@invoice_bp.route('/<int:invoice_id>', methods=['PUT'])
 def update_invoice(invoice_id):
     invoice = Invoice.query.get_or_404(invoice_id)
     data = request.get_json()
@@ -100,7 +99,7 @@ def update_invoice(invoice_id):
     return jsonify(invoice.to_dict()), 200
 
 # Route to delete an invoice
-@invoice_bp.route('/invoices/<int:invoice_id>', methods=['DELETE'])
+@invoice_bp.route('/<int:invoice_id>', methods=['DELETE'])
 def delete_invoice(invoice_id):
     invoice = Invoice.query.get_or_404(invoice_id)
     db.session.delete(invoice)

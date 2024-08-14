@@ -5,7 +5,7 @@ import invoiceReducer from './invoices';
 
 const rootReducer = combineReducers({
   session,
-  invoiceReducer
+  invoices: invoiceReducer
 });
 
 

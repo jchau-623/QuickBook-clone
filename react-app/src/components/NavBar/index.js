@@ -18,9 +18,9 @@ const NavBar = () => {
             <li>
               <NavLink
                 to='/home'
-                exact="true"
-                className="text-white hover:text-green-300"
-                activeClassName="font-bold"
+                className={({ isActive }) =>
+                  isActive ? "text-white font-bold hover:text-green-300" : "text-white hover:text-green-300"
+                }
               >
                 Home
               </NavLink>
@@ -28,9 +28,9 @@ const NavBar = () => {
             <li>
               <NavLink
                 to='/login'
-                exact="true"
-                className="text-white hover:text-green-300"
-                activeClassName="font-bold"
+                className={({ isActive }) =>
+                  isActive ? "text-white font-bold hover:text-green-300" : "text-white hover:text-green-300"
+                }
               >
                 Login
               </NavLink>
@@ -38,9 +38,9 @@ const NavBar = () => {
             <li>
               <NavLink
                 to='/sign-up'
-                exact="true"
-                className="text-white hover:text-green-300"
-                activeClassName="font-bold"
+                className={({ isActive }) =>
+                  isActive ? "text-white font-bold hover:text-green-300" : "text-white hover:text-green-300"
+                }
               >
                 Sign Up
               </NavLink>

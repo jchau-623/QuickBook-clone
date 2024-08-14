@@ -25,8 +25,6 @@ const removeInvoice = (invoiceId) => ({
     payload: invoiceId
 });
 
-// initial state
-const initialState = { invoices: [] };
 
 // thunk actions
 export const fetchInvoices = () => async (dispatch) => {
@@ -35,7 +33,7 @@ export const fetchInvoices = () => async (dispatch) => {
             'Content-Type': 'application/json'
         }
     });
-
+    
     if (response.ok) {
         const data = await response.json();
         dispatch(setInvoices(data));
@@ -50,7 +48,7 @@ export const createInvoice = (invoiceData) => async (dispatch) => {
         },
         body: JSON.stringify(invoiceData)
     });
-
+    
     if (response.ok) {
         const data = await response.json();
         dispatch(addInvoice(data));
@@ -95,27 +93,29 @@ export const deleteInvoice = (invoiceId) => async (dispatch) => {
             'Content-Type': 'application/json'
         }
     });
-
+    
     if (response.ok) {
         dispatch(removeInvoice(invoiceId));
     } else {
         return ['An error occurred. Please try again.'];
     }
 };
+// initial state
+const initialState = { invoices: [] };
 
 // reducer
 export default function invoiceReducer(state = initialState, action) {
     switch (action.type) {
         case SET_INVOICES:
             return { ...state, invoices: action.payload };
-        case ADD_INVOICE:
-            return { ...state, invoices: [...state.invoices, action.payload] };
-        case UPDATE_INVOICE:
+            case ADD_INVOICE:
+                return { ...state, invoices: [...state.invoices, action.payload] };
+                case UPDATE_INVOICE:
             return {
                 ...state,
                 invoices: state.invoices.map((invoice) =>
                     invoice.id === action.payload.id ? action.payload : invoice
-                )
+            )
             };
         case REMOVE_INVOICE:
             return {

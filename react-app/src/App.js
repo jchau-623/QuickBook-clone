@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import LoginForm from './components/auth/LoginForm';
 import SignUpForm from './components/auth/SignUpForm';
 import NavBar from './components/NavBar';
+import SideNavbar from './components/SideNavBar';
 import HomePage from './components/MainPage/HomePage';
 import { authenticate } from './store/session';
 import './output.css';
@@ -25,6 +26,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <SideNavbar />
       <NavBar />
       <Routes>
         <Route path='/login' element={<LoginForm />} />
