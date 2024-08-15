@@ -6,6 +6,8 @@ import SignUpForm from './components/auth/SignUpForm';
 import NavBar from './components/NavBar';
 import SideNavbar from './components/SideNavBar';
 import HomePage from './components/MainPage/HomePage';
+import SingleInvoice from './components/SingleInvoice';
+import EditInvoice from './components/EditInvoice';
 import { authenticate } from './store/session';
 import './output.css';
 
@@ -32,6 +34,8 @@ function App() {
         <Route path='/login' element={<LoginForm />} />
         <Route path='/sign-up' element={<SignUpForm />} />
         <Route path='/home' element={<HomePage />} />
+        <Route path="/invoice/:id" element={<SingleInvoice />} />
+        <Route path="/invoice/:id/edit" element={<EditInvoice />} />
       </Routes>
     </BrowserRouter>
   );

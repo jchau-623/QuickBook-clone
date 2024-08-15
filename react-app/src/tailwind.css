@@ -30,3 +30,59 @@
         typing 4s steps(40, end) 1s 1 normal both,
         blinkCursor 0.75s step-end infinite;
 }
+
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .container,
+    .max-w-4xl,
+    .p-8,
+    .m-8 {
+        padding: 0;
+        margin: 0;
+    }
+
+    .max-w-4xl {
+        max-width: 100%;
+        padding: 0.5rem;
+    }
+
+    .p-8 {
+        padding: 1rem;
+    }
+
+    .mb-8 {
+        margin-bottom: 1.4rem;
+    }
+
+    h1,
+    h2 {
+        font-size: 1.25rem;
+    }
+
+    p,
+    td,
+    th {
+        font-size: 0.875rem;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    th,
+    td {
+        padding: 0.25rem 0.5rem;
+    }
+
+    .print\\:hidden {
+        display: none;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+}

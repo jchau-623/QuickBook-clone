@@ -7,7 +7,7 @@ const NavBar = () => {
   const user = useSelector(state => state.session.user);
 
   return (
-    <nav className="bg-gray-800 p-4 shadow-md">
+    <nav className="bg-gray-800 p-4 shadow-md print:hidden">
       <ul className="flex space-x-4 justify-end">
         {user ? (
           <li>
