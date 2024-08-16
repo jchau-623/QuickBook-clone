@@ -35,7 +35,7 @@ const SignUpForm = () => {
   };
 
   if (user) {
-    return <Navigate to='/' />;
+    return <Navigate to='/home' />;
   }
 
   return (

@@ -2,41 +2,41 @@ from flask import Blueprint, request, jsonify, abort
 from app.models.invoice import Invoice
 from app.models.invoicelineitem import InvoiceLineItem
 from app.models.db import db
-from datetime import datetime
+from app.forms import InvoiceForm 
 
 invoice_bp = Blueprint('invoices', __name__)
 
 # Route to create a new invoice
 @invoice_bp.route('/', methods=['POST'])
 def create_invoice():
-    data = request.get_json()
+    form = InvoiceForm()
 
-    if not data:
-        return jsonify({"error": "No data provided"}), 400
+    if not form.validate_on_submit():
+        return jsonify(form.errors), 400
 
     # Create the invoice
     invoice = Invoice(
-        company_name=data.get('company_name'),
-        company_address=data.get('company_address'),
-        company_phone=data.get('company_phone'),
-        bill_to_name=data.get('bill_to_name'),
-        bill_to_address=data.get('bill_to_address'),
-        invoice_number=data.get('invoice_number'),
-        invoice_date=datetime.strptime(data.get('invoice_date'), '%Y-%m-%d'),
-        terms=data.get('terms'),
-        subtotal=data.get('subtotal'),
-        tax=data.get('tax', 0.0),
-        total=data.get('total'),
-        contact_name=data.get('contact_name'),
-        contact_phone=data.get('contact_phone')
+        company_name=form.company_name.data,
+        company_address=form.company_address.data,
+        company_phone=form.company_phone.data,
+        bill_to_name=form.bill_to_name.data,
+        bill_to_address=form.bill_to_address.data,
+        invoice_number=form.invoice_number.data,
+        invoice_date=form.invoice_date.data,
+        terms=form.terms.data,
+        subtotal=form.subtotal.data,
+        tax=form.tax.data,
+        total=form.total.data,
+        contact_name=form.contact_name.data,
+        contact_phone=form.contact_phone.data
     )
 
     # Add line items
-    for item in data.get('line_items', []):
+    for item in form.line_items.data:
         line_item = InvoiceLineItem(
-            description=item.get('description'),
-            unit_price=item.get('unit_price'),
-            amount=item.get('amount'),
+            description=item['description'],
+            unit_price=item['unit_price'],
+            amount=item['amount'],
             invoice=invoice
         )
         db.session.add(line_item)
@@ -45,6 +45,7 @@ def create_invoice():
     db.session.commit()
 
     return jsonify(invoice.to_dict()), 201
+
 
 # Route to get all invoices
 @invoice_bp.route('/', methods=['GET'])
@@ -62,37 +63,36 @@ def get_invoice(invoice_id):
 @invoice_bp.route('/<int:invoice_id>', methods=['PUT'])
 def update_invoice(invoice_id):
     invoice = Invoice.query.get_or_404(invoice_id)
-    data = request.get_json()
+    form = InvoiceForm()
 
-    if not data:
-        return jsonify({"error": "No data provided"}), 400
+    if not form.validate_on_submit():
+        return jsonify(form.errors), 400
 
     # Update the invoice details
-    invoice.company_name = data.get('company_name', invoice.company_name)
-    invoice.company_address = data.get('company_address', invoice.company_address)
-    invoice.company_phone = data.get('company_phone', invoice.company_phone)
-    invoice.bill_to_name = data.get('bill_to_name', invoice.bill_to_name)
-    invoice.bill_to_address = data.get('bill_to_address', invoice.bill_to_address)
-    invoice.invoice_number = data.get('invoice_number', invoice.invoice_number)
-    invoice.invoice_date = datetime.strptime(data.get('invoice_date'), '%Y-%m-%d')
-    invoice.terms = data.get('terms', invoice.terms)
-    invoice.subtotal = data.get('subtotal', invoice.subtotal)
-    invoice.tax = data.get('tax', invoice.tax)
-    invoice.total = data.get('total', invoice.total)
-    invoice.contact_name = data.get('contact_name', invoice.contact_name)
-    invoice.contact_phone = data.get('contact_phone', invoice.contact_phone)
+    invoice.company_name = form.company_name.data
+    invoice.company_address = form.company_address.data
+    invoice.company_phone = form.company_phone.data
+    invoice.bill_to_name = form.bill_to_name.data
+    invoice.bill_to_address = form.bill_to_address.data
+    invoice.invoice_number = form.invoice_number.data
+    invoice.invoice_date = form.invoice_date.data 
+    invoice.terms = form.terms.data
+    invoice.subtotal = form.subtotal.data
+    invoice.tax = form.tax.data
+    invoice.total = form.total.data
+    invoice.contact_name = form.contact_name.data
+    invoice.contact_phone = form.contact_phone.data
 
     # Update line items
-    if 'line_items' in data:
-        InvoiceLineItem.query.filter_by(invoice_id=invoice.id).delete()
-        for item in data['line_items']:
-            line_item = InvoiceLineItem(
-                description=item.get('description'),
-                unit_price=item.get('unit_price'),
-                amount=item.get('amount'),
-                invoice=invoice
-            )
-            db.session.add(line_item)
+    InvoiceLineItem.query.filter_by(invoice_id=invoice.id).delete()
+    for item in form.line_items.data:
+        line_item = InvoiceLineItem(
+            description=item['description'],
+            unit_price=item['unit_price'],
+            amount=item['amount'],
+            invoice=invoice
+        )
+        db.session.add(line_item)
 
     db.session.commit()
 

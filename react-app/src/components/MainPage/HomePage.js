@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { createInvoice } from '../../store/invoices'; // Import the createInvoice action
 
 const HomePage = () => {
+    const dispatch = useDispatch(); // Initialize dispatch for use in the component
     const [invoiceData, setInvoiceData] = useState({
         companyName: '',
         companyAddress: '',
@@ -20,7 +23,7 @@ const HomePage = () => {
             { description: 'Telephone', amount: '' },
             { description: 'Sprinkler Maintenance', amount: '' },
             { description: 'Fire Alarm Maintenance', amount: '' },
-            { description: 'Fire Alarm Monitoring',amount: '' },
+            { description: 'Fire Alarm Monitoring', amount: '' },
         ],
         subtotal: '0.00',
         tax: '0.00',
@@ -64,10 +67,11 @@ const HomePage = () => {
         }));
     }, [invoiceData.lineItems, invoiceData.tax]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log(invoiceData);
-        // Add submit functionality here
+        // Dispatch the createInvoice action to save the invoice
+        await dispatch(createInvoice(invoiceData));
     };
 
     return (

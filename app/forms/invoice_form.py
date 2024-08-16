@@ -15,6 +15,8 @@ class LineItemForm(FlaskForm):
     description = StringField('Description', validators=[DataRequired()])
     unit_price = FloatField('Unit Price', validators=[DataRequired()])
     amount = FloatField('Amount', validators=[DataRequired()])
+    class Meta:
+        csrf = False
 
 class InvoiceForm(FlaskForm):
     company_name = StringField('Company Name', validators=[DataRequired()])
@@ -31,3 +33,6 @@ class InvoiceForm(FlaskForm):
     contact_name = StringField('Contact Name', validators=[DataRequired()])
     contact_phone = StringField('Contact Phone', validators=[DataRequired()])
     line_items = FieldList(FormField(LineItemForm), min_entries=1, validators=[DataRequired()])
+
+    class Meta:
+        csrf = False
