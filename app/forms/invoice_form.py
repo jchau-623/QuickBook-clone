@@ -17,9 +17,10 @@ def invoice_number_exists(form, field):
         raise ValidationError('Invoice number already exists.')
 
 class LineItemForm(FlaskForm):
-    description = StringField('Description', validators=[DataRequired()])
-    unit_price = FloatField('Unit Price', validators=[DataRequired()])
-    amount = FloatField('Amount', validators=[DataRequired()])
+    description = StringField('Description', validators=[DataRequired(message="Description is required.")])
+    unit_price = FloatField('Unit Price', validators=[DataRequired(message="Unit Price is required.")])
+    amount = FloatField('Amount', validators=[DataRequired(message="Amount is required.")])
+
     class Meta:
         csrf = False
 

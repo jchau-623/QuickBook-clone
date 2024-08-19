@@ -7,18 +7,20 @@ const NavBar = () => {
   const user = useSelector(state => state.session.user);
 
   return (
-    <nav className="bg-gray-800 p-4 shadow-md print:hidden">
-      <ul className="flex space-x-4 justify-between">
-
-        <li className="flex-grow text-center">
+    <nav className="bg-gray-800 p-4 shadow-md print:hidden h-16">
+      <ul className="flex justify-between items-center h-full">
+        <div className="flex items-center">
+          {/* Left side: Empty div to balance the right side */}
+        </div>
+        <div className="flex-1 text-center">
           <NavLink
             to='/home'
-            className="text-white font-bold hover:text-green-300"
+            className="text-white hover:text-green-300"
           >
-            Back to Home
+            Home
           </NavLink>
-        </li>
-        <li>
+        </div>
+        <div className="flex items-center space-x-4">
           {user ? (
             <LogoutButton />
           ) : (
@@ -41,7 +43,7 @@ const NavBar = () => {
               </NavLink>
             </>
           )}
-        </li>
+        </div>
       </ul>
     </nav>
   );

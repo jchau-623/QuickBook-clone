@@ -71,9 +71,26 @@ const EditInvoice = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        console.log('Submitting invoice:', invoice); // Log the entire invoice object to inspect its contents
+
+        // Basic validation to ensure that line_items are filled
+        for (let item of invoice.line_items) {
+            if (!item.description || !item.amount) {
+                alert("Each line item must have a description and an amount.");
+                return;
+            }
+        }
+
+        if (!invoice.tax) {
+            alert("Tax is required.");
+            return;
+        }
+
         await dispatch(editInvoice(id, invoice));
         navigate(`/invoice/${id}`);
     };
+
 
     if (!invoice) {
         return <div className="text-center text-gray-600">Loading...</div>;

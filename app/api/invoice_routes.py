@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, abort
 from app.models.invoice import Invoice
 from app.models.invoicelineitem import InvoiceLineItem
 from app.models.db import db
-from app.forms import InvoiceForm 
+from app.forms import InvoiceForm
 
 invoice_bp = Blueprint('invoices', __name__)
 
@@ -53,34 +53,39 @@ def get_invoices():
     invoices = Invoice.query.all()
     return jsonify([invoice.to_dict() for invoice in invoices]), 200
 
+
 # Route to get a specific invoice by ID
 @invoice_bp.route('/<int:invoice_id>', methods=['GET'])
 def get_invoice(invoice_id):
     invoice = Invoice.query.get_or_404(invoice_id)
     return jsonify(invoice.to_dict()), 200
 
+
+# Route to update an existing invoice
 @invoice_bp.route('/<int:invoice_id>', methods=['PUT'])
 def update_invoice(invoice_id):
-    invoice = Invoice.query.get_or_404(invoice_id)
-    form = InvoiceForm()
+    # Log the incoming request data to debug what is being sent
+    print("Received data:", request.json)
 
-    if not form.validate_on_submit():
+    invoice = Invoice.query.get_or_404(invoice_id)
+    form = InvoiceForm(meta={'csrf': False})
+
+    # Manually populate the form with data from request.json to bypass validation issues
+    form.process(data=request.json)
+
+    # If the form does not validate, log and return errors
+    if not form.validate():
+        print("Form validation errors:", form.errors)
         return jsonify(form.errors), 400
 
-    # Check if the invoice number is being changed
-    if invoice.invoice_number != form.invoice_number.data:
-        existing_invoice = Invoice.query.filter_by(invoice_number=form.invoice_number.data).first()
-        if existing_invoice:
-            return jsonify({"invoice_number": ["Invoice number already exists."]}), 400
-
-    # Update the invoice details
+    # Update the invoice details if the form validation passed
     invoice.company_name = form.company_name.data
     invoice.company_address = form.company_address.data
     invoice.company_phone = form.company_phone.data
     invoice.bill_to_name = form.bill_to_name.data
     invoice.bill_to_address = form.bill_to_address.data
     invoice.invoice_number = form.invoice_number.data
-    invoice.invoice_date = form.invoice_date.data 
+    invoice.invoice_date = form.invoice_date.data
     invoice.terms = form.terms.data
     invoice.subtotal = form.subtotal.data
     invoice.tax = form.tax.data
@@ -88,7 +93,7 @@ def update_invoice(invoice_id):
     invoice.contact_name = form.contact_name.data
     invoice.contact_phone = form.contact_phone.data
 
-    # Update line items
+    # Delete old line items and add the new ones
     InvoiceLineItem.query.filter_by(invoice_id=invoice.id).delete()
     for item in form.line_items.data:
         line_item = InvoiceLineItem(
@@ -99,9 +104,12 @@ def update_invoice(invoice_id):
         )
         db.session.add(line_item)
 
+    # Commit the changes to the database
     db.session.commit()
 
+    # Return the updated invoice as JSON
     return jsonify(invoice.to_dict()), 200
+
 
 # Route to delete an invoice
 @invoice_bp.route('/<int:invoice_id>', methods=['DELETE'])
