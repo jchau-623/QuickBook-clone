@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask import request
 from wtforms import StringField, FloatField, DateField, FieldList, FormField
 from wtforms.validators import DataRequired, ValidationError
 from app.models import Invoice
@@ -7,8 +8,12 @@ from app.models import Invoice
 def invoice_number_exists(form, field):
     # Check if invoice number already exists
     invoice_number = field.data
-    invoice = Invoice.query.filter(Invoice.invoice_number == invoice_number).first()
-    if invoice:
+    invoice_id = request.view_args.get('invoice_id')
+
+    # If we're updating an invoice, check if the existing invoice number belongs to the current invoice
+    existing_invoice = Invoice.query.filter(Invoice.invoice_number == invoice_number).first()
+    
+    if existing_invoice and (invoice_id is None or existing_invoice.id != int(invoice_id)):
         raise ValidationError('Invoice number already exists.')
 
 class LineItemForm(FlaskForm):

@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteInvoice } from '../../store/invoices'; // Import the delete action
+import { deleteInvoice } from '../../store/invoices';
 
 const SingleInvoice = () => {
     const { id } = useParams();
     const invoices = useSelector(state => state.invoices.invoices);
-    const [invoice, setInvoice] = useState(null);
+    const [invoice, setInvoice] = useState({
+        invoice_number: '',
+        invoice_date: '',
+        terms: '',
+        tax: 0.00,
+        subtotal: 0.00,
+        total: 0.00,
+        line_items: []
+    });
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -16,6 +24,26 @@ const SingleInvoice = () => {
             setInvoice(selectedInvoice);
         }
     }, [id, invoices]);
+
+    useEffect(() => {
+        if (invoice.line_items) {
+            // Calculate subtotal by summing all the amounts
+            const subtotal = invoice.line_items.reduce((acc, item) => {
+                return acc + parseFloat(item.amount || 0);
+            }, 0);
+
+            // Calculate total by adding tax to the subtotal
+            const tax = parseFloat(invoice.tax) || 0;
+            const total = subtotal + tax;
+
+            // Update the invoice state with the new subtotal and total
+            setInvoice(prevInvoice => ({
+                ...prevInvoice,
+                subtotal: subtotal.toFixed(2),
+                total: total.toFixed(2)
+            }));
+        }
+    }, [invoice.line_items, invoice.tax]);
 
     const handleDelete = async () => {
         const confirmation = window.confirm("Are you sure you want to delete this invoice?");
@@ -81,7 +109,6 @@ const SingleInvoice = () => {
                     <tr className="border-b border-gray-300">
                         <th className="text-left p-2">QUANTITY</th>
                         <th className="text-left p-2">DESCRIPTION</th>
-                        <th className="text-right p-2">UNIT PRICE</th>
                         <th className="text-right p-2">AMOUNT</th>
                     </tr>
                 </thead>
@@ -90,8 +117,7 @@ const SingleInvoice = () => {
                         <tr key={index} className="border-b border-gray-200">
                             <td className="p-2">{index + 1}</td>
                             <td className="p-2">{item.description}</td>
-                            <td className="p-2 text-right">${item.unit_price.toFixed(2)}</td>
-                            <td className="p-2 text-right">${item.amount.toFixed(2)}</td>
+                            <td className="p-2 text-right">${parseFloat(item.amount).toFixed(2)}</td>
                         </tr>
                     ))}
                 </tbody>
@@ -102,15 +128,15 @@ const SingleInvoice = () => {
                 <div className="w-1/2">
                     <div className="flex justify-between border-t border-gray-300 pt-4">
                         <p className="font-semibold">SUBTOTAL</p>
-                        <p>${invoice.subtotal.toFixed(2)}</p>
+                        <p>${invoice.subtotal}</p>
                     </div>
                     <div className="flex justify-between border-t border-gray-300 pt-4">
                         <p className="font-semibold">TAX</p>
-                        <p>${invoice.tax.toFixed(2)}</p>
+                        <p>${invoice.tax}</p>
                     </div>
                     <div className="flex justify-between border-t border-gray-300 pt-4 font-bold">
                         <p className="font-semibold">TOTAL</p>
-                        <p>${invoice.total.toFixed(2)}</p>
+                        <p>${invoice.total}</p>
                     </div>
                 </div>
             </div>

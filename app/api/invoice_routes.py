@@ -59,7 +59,6 @@ def get_invoice(invoice_id):
     invoice = Invoice.query.get_or_404(invoice_id)
     return jsonify(invoice.to_dict()), 200
 
-# Route to update an existing invoice
 @invoice_bp.route('/<int:invoice_id>', methods=['PUT'])
 def update_invoice(invoice_id):
     invoice = Invoice.query.get_or_404(invoice_id)
@@ -67,6 +66,12 @@ def update_invoice(invoice_id):
 
     if not form.validate_on_submit():
         return jsonify(form.errors), 400
+
+    # Check if the invoice number is being changed
+    if invoice.invoice_number != form.invoice_number.data:
+        existing_invoice = Invoice.query.filter_by(invoice_number=form.invoice_number.data).first()
+        if existing_invoice:
+            return jsonify({"invoice_number": ["Invoice number already exists."]}), 400
 
     # Update the invoice details
     invoice.company_name = form.company_name.data

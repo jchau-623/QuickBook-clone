@@ -3,7 +3,7 @@ from datetime import datetime
 
 # Seed function to add invoices
 def seed_invoices():
-    # Create an example invoice based on the provided screenshot
+    # Create an example invoice without subtotal, tax, and total initially
     invoice = Invoice(
         company_name="Shy, LLC",
         company_address="8 Laurel Lane, Old Westbury, NY 11568",
@@ -13,9 +13,6 @@ def seed_invoices():
         invoice_number="0502",
         invoice_date=datetime.strptime('2024-07-01', '%Y-%m-%d'),
         terms="Due On or Before the 10th of the following month",
-        subtotal=43113.78,
-        tax=0.0,
-        total=43113.78,
         contact_name="John Chau",
         contact_phone="917-578-9029"
     )
@@ -38,10 +35,23 @@ def seed_invoices():
     # Add line items to the invoice
     invoice.line_items.extend(line_items)
 
+    # Calculate subtotal
+    subtotal = sum(item.amount for item in line_items)
+
+    # Set tax (assuming tax is 0% in this case, modify if you have a tax rate)
+    tax = 0.0
+
+    # Calculate total
+    total = subtotal + tax
+
+    # Update invoice with calculated values
+    invoice.subtotal = subtotal
+    invoice.tax = tax
+    invoice.total = total
+
     # Add the invoice to the session and commit
     db.session.add(invoice)
     db.session.commit()
-
 
 # Function to undo the seeding
 def undo_invoices():
