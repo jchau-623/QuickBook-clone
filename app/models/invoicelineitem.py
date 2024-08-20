@@ -5,7 +5,7 @@ class InvoiceLineItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(255), nullable=False)
-    unit_price = db.Column(db.Float, nullable=False)
+    unit_price = db.Column(db.Float, nullable=True)
     amount = db.Column(db.Float, nullable=False)
     invoice_id = db.Column(db.Integer, db.ForeignKey('invoices.id'), nullable=False)
 

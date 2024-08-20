@@ -19,8 +19,8 @@ class Invoice(db.Model):
     contact_name = db.Column(db.String(255), nullable=False)
     contact_phone = db.Column(db.String(20), nullable=False)
     
-    # Relationship to InvoiceLineItem (one-to-many)
-    line_items = db.relationship('InvoiceLineItem', backref='invoice', lazy=True)
+    # Relationship to InvoiceLineItem (one-to-many) with cascade
+    line_items = db.relationship('InvoiceLineItem', backref='invoice', lazy=True, cascade="all, delete-orphan")
 
     def to_dict(self):
         return {

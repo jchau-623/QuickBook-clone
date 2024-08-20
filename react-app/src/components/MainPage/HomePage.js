@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { createInvoice } from '../../store/invoices'; // Import the createInvoice action
+import { createInvoice } from '../../store/invoices';
 
 const HomePage = () => {
-    const dispatch = useDispatch(); // Initialize dispatch for use in the component
+    const dispatch = useDispatch();
     const [invoiceData, setInvoiceData] = useState({
-        companyName: '',
-        companyAddress: '',
-        companyPhone: '',
-        billToName: '',
-        billToAddress: '',
-        invoiceNumber: '',
-        invoiceDate: '',
+        company_name: '',
+        company_address: '',
+        company_phone: '',
+        bill_to_name: '',
+        bill_to_address: '',
+        invoice_number: '',
+        invoice_date: '',
         terms: '',
-        lineItems: [
+        contact_name: '',
+        contact_phone: '',
+        line_items: [
             { description: 'Base rent', amount: '' },
             { description: 'Maintenance fees', amount: '' },
             { description: 'Water & Sewage', amount: '' },
@@ -40,38 +42,60 @@ const HomePage = () => {
 
     const handleLineItemChange = (index, e) => {
         const { name, value } = e.target;
-        const updatedLineItems = invoiceData.lineItems.map((item, i) =>
+        const updatedLineItems = invoiceData.line_items.map((item, i) =>
             i === index ? { ...item, [name]: value } : item
         );
         setInvoiceData(prevData => ({
             ...prevData,
-            lineItems: updatedLineItems
+            line_items: updatedLineItems
         }));
     };
 
     useEffect(() => {
-        // Calculate subtotal by summing all the amounts
-        const subtotal = invoiceData.lineItems.reduce((acc, item) => {
+        const subtotal = invoiceData.line_items.reduce((acc, item) => {
             return acc + parseFloat(item.amount || 0);
         }, 0);
 
-        // Calculate total by adding tax to the subtotal
         const tax = parseFloat(invoiceData.tax) || 0;
         const total = subtotal + tax;
 
-        // Update the invoiceData state with the new subtotal and total
         setInvoiceData(prevData => ({
             ...prevData,
             subtotal: subtotal.toFixed(2),
             total: total.toFixed(2)
         }));
-    }, [invoiceData.lineItems, invoiceData.tax]);
+    }, [invoiceData.line_items, invoiceData.tax]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(invoiceData);
-        // Dispatch the createInvoice action to save the invoice
-        await dispatch(createInvoice(invoiceData));
+        const errors = validateForm(invoiceData);
+        if (errors.length > 0) {
+            alert(errors.join('\n'));
+            return;
+        }
+        const response = await dispatch(createInvoice(invoiceData));
+        if (response) {
+            alert('Invoice created successfully');
+        }
+    };
+
+    const validateForm = (data) => {
+        let errors = [];
+        if (!data.company_name) errors.push('Company Name is required');
+        if (!data.company_address) errors.push('Company Address is required');
+        if (!data.company_phone) errors.push('Company Phone is required');
+        if (!data.bill_to_name) errors.push('Bill To Name is required');
+        if (!data.bill_to_address) errors.push('Bill To Address is required');
+        if (!data.invoice_number) errors.push('Invoice Number is required');
+        if (!data.invoice_date) errors.push('Invoice Date is required');
+        if (!data.contact_name) errors.push('Contact Name is required');
+        if (!data.contact_phone) errors.push('Contact Phone is required');
+        data.line_items.forEach((item, index) => {
+            if (!item.description) errors.push(`Description is required for line item ${index + 1}`);
+            if (!item.amount) errors.push(`Amount is required for line item ${index + 1}`);
+        });
+        if (!data.tax) errors.push('Tax is required');
+        return errors;
     };
 
     return (
@@ -88,8 +112,8 @@ const HomePage = () => {
                                 <span className="text-gray-700">Company Name</span>
                                 <input
                                     type="text"
-                                    name="companyName"
-                                    value={invoiceData.companyName}
+                                    name="company_name"
+                                    value={invoiceData.company_name}
                                     onChange={handleChange}
                                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                                 />
@@ -98,8 +122,8 @@ const HomePage = () => {
                                 <span className="text-gray-700">Company Address</span>
                                 <input
                                     type="text"
-                                    name="companyAddress"
-                                    value={invoiceData.companyAddress}
+                                    name="company_address"
+                                    value={invoiceData.company_address}
                                     onChange={handleChange}
                                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                                 />
@@ -108,8 +132,28 @@ const HomePage = () => {
                                 <span className="text-gray-700">Company Phone</span>
                                 <input
                                     type="text"
-                                    name="companyPhone"
-                                    value={invoiceData.companyPhone}
+                                    name="company_phone"
+                                    value={invoiceData.company_phone}
+                                    onChange={handleChange}
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                                />
+                            </label>
+                            <label className="block">
+                                <span className="text-gray-700">Contact Name</span>
+                                <input
+                                    type="text"
+                                    name="contact_name"
+                                    value={invoiceData.contact_name}
+                                    onChange={handleChange}
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                                />
+                            </label>
+                            <label className="block">
+                                <span className="text-gray-700">Contact Phone</span>
+                                <input
+                                    type="text"
+                                    name="contact_phone"
+                                    value={invoiceData.contact_phone}
                                     onChange={handleChange}
                                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                                 />
@@ -127,8 +171,8 @@ const HomePage = () => {
                                 <span className="text-gray-700">Bill To Name</span>
                                 <input
                                     type="text"
-                                    name="billToName"
-                                    value={invoiceData.billToName}
+                                    name="bill_to_name"
+                                    value={invoiceData.bill_to_name}
                                     onChange={handleChange}
                                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                                 />
@@ -137,8 +181,8 @@ const HomePage = () => {
                                 <span className="text-gray-700">Bill To Address</span>
                                 <input
                                     type="text"
-                                    name="billToAddress"
-                                    value={invoiceData.billToAddress}
+                                    name="bill_to_address"
+                                    value={invoiceData.bill_to_address}
                                     onChange={handleChange}
                                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                                 />
@@ -156,8 +200,8 @@ const HomePage = () => {
                                 <span className="text-gray-700">Invoice Number</span>
                                 <input
                                     type="text"
-                                    name="invoiceNumber"
-                                    value={invoiceData.invoiceNumber}
+                                    name="invoice_number"
+                                    value={invoiceData.invoice_number}
                                     onChange={handleChange}
                                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                                 />
@@ -166,8 +210,8 @@ const HomePage = () => {
                                 <span className="text-gray-700">Invoice Date</span>
                                 <input
                                     type="date"
-                                    name="invoiceDate"
-                                    value={invoiceData.invoiceDate}
+                                    name="invoice_date"
+                                    value={invoiceData.invoice_date}
                                     onChange={handleChange}
                                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                                 />
@@ -197,7 +241,7 @@ const HomePage = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {invoiceData.lineItems.map((item, index) => (
+                            {invoiceData.line_items.map((item, index) => (
                                 <tr key={index}>
                                     <td className="py-2 px-4 border-b">
                                         <input

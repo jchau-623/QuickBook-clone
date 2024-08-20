@@ -6,12 +6,16 @@ from app.forms import InvoiceForm
 
 invoice_bp = Blueprint('invoices', __name__)
 
-# Route to create a new invoice
 @invoice_bp.route('/', methods=['POST'])
 def create_invoice():
-    form = InvoiceForm()
+    print("Received data:", request.json)  # Log the incoming data to inspect
 
-    if not form.validate_on_submit():
+    form = InvoiceForm(meta={'csrf': False})  # Ensure CSRF is disabled if not used
+
+    form.process(data=request.json)  # Manually process the request data
+
+    if not form.validate():
+        print("Form validation errors:", form.errors)  # Log form validation errors
         return jsonify(form.errors), 400
 
     # Create the invoice

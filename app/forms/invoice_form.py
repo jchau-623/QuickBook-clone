@@ -18,7 +18,7 @@ def invoice_number_exists(form, field):
 
 class LineItemForm(FlaskForm):
     description = StringField('Description', validators=[DataRequired(message="Description is required.")])
-    unit_price = FloatField('Unit Price', validators=[DataRequired(message="Unit Price is required.")])
+    unit_price = FloatField('Unit Price') 
     amount = FloatField('Amount', validators=[DataRequired(message="Amount is required.")])
 
     class Meta:
