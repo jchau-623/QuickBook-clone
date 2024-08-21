@@ -9,6 +9,7 @@ import HomePage from './components/MainPage/HomePage';
 import SingleInvoice from './components/SingleInvoice';
 import EditInvoice from './components/EditInvoice';
 import { authenticate } from './store/session';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 import './output.css';
 
 function App() {
@@ -31,11 +32,15 @@ function App() {
       <SideNavbar />
       <NavBar />
       <Routes>
-        <Route path='/login' element={<LoginForm />} />
-        <Route path='/sign-up' element={<SignUpForm />} />
-        <Route path='/home' element={<HomePage />} />
-        <Route path="/invoice/:id" element={<SingleInvoice />} />
-        <Route path="/invoice/:id/edit" element={<EditInvoice />} />
+          <Route path='/login' element={<LoginForm />} />
+          <Route path='/sign-up' element={<SignUpForm />} />
+
+        <Route element={<ProtectedRoute />}>
+          <Route path='/home' element={<HomePage />} />
+          <Route path="/invoice/:id" element={<SingleInvoice />} />
+          <Route path="/invoice/:id/edit" element={<EditInvoice />} />
+        </Route >
+
       </Routes>
     </BrowserRouter>
   );

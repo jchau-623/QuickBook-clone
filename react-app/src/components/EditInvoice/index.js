@@ -49,18 +49,30 @@ const EditInvoice = () => {
         }));
     };
 
+    const handleAddLineItem = () => {
+        setInvoice(prevInvoice => ({
+            ...prevInvoice,
+            line_items: [...prevInvoice.line_items, { description: '', amount: '' }]
+        }));
+    };
+
+    const handleDeleteLineItem = (index) => {
+        const updatedLineItems = invoice.line_items.filter((_, i) => i !== index);
+        setInvoice(prevInvoice => ({
+            ...prevInvoice,
+            line_items: updatedLineItems
+        }));
+    };
+
     useEffect(() => {
         if (invoice.line_items) {
-            // Calculate subtotal by summing all the amounts
             const subtotal = invoice.line_items.reduce((acc, item) => {
                 return acc + parseFloat(item.amount || 0);
             }, 0);
 
-            // Calculate total by adding tax to the subtotal
             const tax = parseFloat(invoice.tax) || 0;
             const total = subtotal + tax;
 
-            // Update the invoice state with the new subtotal and total
             setInvoice(prevInvoice => ({
                 ...prevInvoice,
                 subtotal: subtotal.toFixed(2),
@@ -74,7 +86,6 @@ const EditInvoice = () => {
 
         console.log('Submitting invoice:', invoice); // Log the entire invoice object to inspect its contents
 
-        // Basic validation to ensure that line_items are filled
         for (let item of invoice.line_items) {
             if (!item.description || !item.amount) {
                 alert("Each line item must have a description and an amount.");
@@ -157,6 +168,7 @@ const EditInvoice = () => {
                     <tr className="border-b border-gray-300">
                         <th className="text-left p-2">DESCRIPTION</th>
                         <th className="text-right p-2">AMOUNT</th>
+                        <th className="text-right p-2"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -180,10 +192,26 @@ const EditInvoice = () => {
                                     className="w-full p-2 border border-gray-300 rounded text-right"
                                 />
                             </td>
+                            <td className="p-2 text-right">
+                                <button
+                                    type="button"
+                                    onClick={() => handleDeleteLineItem(index)}
+                                    className="text-red-600 hover:text-red-900"
+                                >
+                                    Delete
+                                </button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+            <button
+                type="button"
+                onClick={handleAddLineItem}
+                className="mt-4 py-2 px-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-200"
+            >
+                Add Line Item
+            </button>
 
             {/* Invoice Summary */}
             <div className="flex justify-end items-start mb-8">

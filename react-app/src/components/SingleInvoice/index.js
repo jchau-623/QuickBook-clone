@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteInvoice } from '../../store/invoices';
+import { deleteInvoice, fetchInvoices } from '../../store/invoices';
+
 
 const SingleInvoice = () => {
     const { id } = useParams();
@@ -17,6 +18,11 @@ const SingleInvoice = () => {
     });
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        dispatch(fetchInvoices()); 
+    }, [dispatch]);
+
 
     useEffect(() => {
         const selectedInvoice = invoices.find(inv => inv.id === parseInt(id));

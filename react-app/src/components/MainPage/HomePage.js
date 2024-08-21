@@ -51,6 +51,21 @@ const HomePage = () => {
         }));
     };
 
+    const handleAddLineItem = () => {
+        setInvoiceData(prevData => ({
+            ...prevData,
+            line_items: [...prevData.line_items, { description: '', amount: '' }]
+        }));
+    };
+
+    const handleDeleteLineItem = (index) => {
+        const updatedLineItems = invoiceData.line_items.filter((_, i) => i !== index);
+        setInvoiceData(prevData => ({
+            ...prevData,
+            line_items: updatedLineItems
+        }));
+    };
+
     useEffect(() => {
         const subtotal = invoiceData.line_items.reduce((acc, item) => {
             return acc + parseFloat(item.amount || 0);
@@ -238,6 +253,7 @@ const HomePage = () => {
                             <tr>
                                 <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-700">Description</th>
                                 <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-700">Amount</th>
+                                <th className="py-2 px-4 border-b text-left text-sm font-semibold text-gray-700"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -261,10 +277,26 @@ const HomePage = () => {
                                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                                         />
                                     </td>
+                                    <td className="py-2 px-4 border-b">
+                                        <button
+                                            type="button"
+                                            onClick={() => handleDeleteLineItem(index)}
+                                            className="text-red-600 hover:text-red-900"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+                    <button
+                        type="button"
+                        onClick={handleAddLineItem}
+                        className="mt-4 py-2 px-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-200"
+                    >
+                        Add Line Item
+                    </button>
                 </div>
 
                 {/* Summary */}
