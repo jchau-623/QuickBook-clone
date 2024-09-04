@@ -7,8 +7,6 @@ const NavBar = () => {
   const user = useSelector(state => state.session.user);
 
 
-
-  
   return (
     <nav className="bg-gray-800 p-4 shadow-md print:hidden h-16">
       <ul className="flex justify-between items-center h-full">
